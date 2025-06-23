@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  # Service untuk aplikasi web Python
+  web:
+    build: .
+    container_name: python_web_app
+    ports:
+      - "5001:5000"
+    volumes:
+      - ./app:/app
+    env_file:
+      - .env
+    # PASTIKAN BAGIAN INI BENAR: Menunggu sampai DB benar-benar sehat
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      - FLASK_APP=app.py
+      - FLASK_ENV=development
+      - DB_HOST=db
+
+  # Service untuk database PostgreSQL
+  db:
+    image: postgres:13
+    container_name: postgres_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    env_file:
+      - .env
+    ports:
+      - "5432:5432"
+    # PASTIKAN BAGIAN HEALTHCHECK INI ADA DAN BENAR
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:

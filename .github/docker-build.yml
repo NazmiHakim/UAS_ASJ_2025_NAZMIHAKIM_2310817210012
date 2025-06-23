@@ -1,0 +1,30 @@
+name: CI-Build and Push Docker Image
+
+# Pemicu workflow: dijalankan setiap kali ada push ke branch 'main'
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest # Menjalankan job di mesin virtual Ubuntu
+
+    steps:
+      # Langkah 1: Checkout kode dari repositori
+      - name: Check out the repo
+        uses: actions/checkout@v3
+
+      # Langkah 2: Login ke Docker Hub
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      # Langkah 3: Build dan Push image ke Docker Hub
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v4
+        with:
+          context: . # Konteks build adalah direktori root
+          push: true # Push image setelah build berhasil
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/proyek-crud-docker:latest # Tag image
