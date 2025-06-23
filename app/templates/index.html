@@ -1,42 +1,67 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Daftar Tugas (CRUD)</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body>
-    <div class="container mt-5">
-        <h1 class="mb-4">Daftar Tugasku</h1>
+{% extends 'layout.html' %}
 
-        <!-- Form Tambah/Update Tugas -->
-        <div class="card mb-4">
+{% block title %}
+Perekrutan Pahlawan
+{% endblock %}
+
+{% block content %}
+<div class="p-5 mb-4 bg-dark rounded-3 text-white">
+    <div class="container-fluid py-5">
+      <h1 class="display-5 fw-bold">Babad Para Pahlawan</h1>
+      <p class="col-md-8 fs-4">Kelola daftar para petualang pemberani di kerajaan ini. Rekrut nama baru, perbarui keahlian, atau arsipkan mereka yang telah pensiun.</p>
+    </div>
+</div>
+
+<div class="card bg-secondary text-white mb-4 border-light">
+    <div class="card-body">
+        <h5 class="card-title">Rekrut Pahlawan Baru</h5>
+        <form action="{{ url_for('add') }}" method="post" class="row g-3">
+            <div class="col-md-4">
+                <label for="hero_name" class="form-label">Nama Pahlawan</label>
+                <input type="text" class="form-control" name="hero_name" id="hero_name" placeholder="Contoh: Sir Gideon" required>
+            </div>
+            <div class="col-md-3">
+                <label for="hero_race" class="form-label">Ras</label>
+                <input type="text" class="form-control" name="hero_race" id="hero_race" placeholder="Contoh: Human" required>
+            </div>
+            <div class="col-md-3">
+                <label for="hero_skill" class="form-label">Keahlian Utama</label>
+                <input type="text" class="form-control" name="hero_skill" id="hero_skill" placeholder="Contoh: Swordsmanship" required>
+            </div>
+            <div class="col-md-2 d-flex align-items-end">
+                <button class="btn btn-warning w-100" type="submit">
+                    <i class="bi bi-person-plus-fill"></i> Rekrut
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<h2 class="text-white border-bottom pb-2 mb-3">Pahlawan Terkini</h2>
+<div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+    {% for hero in heroes %}
+    <div class="col">
+        <div class="card h-100 text-white bg-dark">
             <div class="card-body">
-                <form action="{{ url_for('add') }}" method="post">
-                    <div class="input-group">
-                        <input type="text" class="form-control" name="task_content" placeholder="Masukkan tugas baru..." required>
-                        <button class="btn btn-primary" type="submit">Tambah Tugas</button>
-                    </div>
-                </form>
+                <h5 class="card-title">{{ hero.name }}</h5>
+                <h6 class="card-subtitle mb-2 text-muted">Ras: {{ hero.race }}</h6>
+                <p class="card-text">
+                    <i class="bi bi-star-fill text-warning"></i> 
+                    <strong>Keahlian:</strong> {{ hero.skill }}
+                </p>
+                <a href="{{ url_for('edit', id=hero.id) }}" class="btn btn-outline-info btn-sm">
+                    <i class="bi bi-pencil-square"></i> Edit
+                </a>
+                <a href="{{ url_for('delete', id=hero.id) }}" class="btn btn-outline-danger btn-sm" onclick="return confirm('Anda yakin ingin menghapus catatan pahlawan ini?')">
+                    <i class="bi bi-trash"></i> Hapus Catatan
+                </a>
             </div>
         </div>
-
-        <!-- Daftar Tugas -->
-        <h2>Tugas yang Ada</h2>
-        <ul class="list-group">
-            {% for task in tasks %}
-            <li class="list-group-item d-flex justify-content-between align-items-center">
-                {{ task.content }}
-                <div>
-                    <!-- Tombol Hapus -->
-                    <a href="{{ url_for('delete', id=task.id) }}" class="btn btn-danger btn-sm">Hapus</a>
-                </div>
-            </li>
-            {% else %}
-            <li class="list-group-item">Belum ada tugas.</li>
-            {% endfor %}
-        </ul>
     </div>
-</body>
-</html>
+    {% else %}
+    <div class="col-12">
+        <div class="alert alert-secondary">Babad masih kosong. Belum ada pahlawan yang direkrut.</div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

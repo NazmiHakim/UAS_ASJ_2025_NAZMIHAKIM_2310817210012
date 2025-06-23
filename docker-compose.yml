@@ -11,7 +11,6 @@ services:
       - ./app:/app
     env_file:
       - .env
-    # PASTIKAN BAGIAN INI BENAR: Menunggu sampai DB benar-benar sehat
     depends_on:
       db:
         condition: service_healthy
@@ -30,7 +29,6 @@ services:
       - .env
     ports:
       - "5432:5432"
-    # PASTIKAN BAGIAN HEALTHCHECK INI ADA DAN BENAR
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
       interval: 5s

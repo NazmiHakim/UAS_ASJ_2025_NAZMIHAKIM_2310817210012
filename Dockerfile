@@ -16,6 +16,5 @@ COPY ./app /app
 # Ekspos port yang akan digunakan oleh aplikasi Flask di dalam container
 EXPOSE 5000
 
-# Perintah untuk menjalankan aplikasi saat container dimulai
 # Menggunakan 'flask run' untuk memanfaatkan development server dengan live reload
 CMD ["flask", "--app", "app:create_app", "run", "--host=0.0.0.0", "--debugger"]

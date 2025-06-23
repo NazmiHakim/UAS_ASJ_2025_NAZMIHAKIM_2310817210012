@@ -2,9 +2,12 @@ from flask_sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy()
 
-class Task(db.Model):
+class Hero(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    content = db.Column(db.String(200), nullable=False)
+    name = db.Column(db.String(200), nullable=False)
+    race = db.Column(db.String(50), nullable=False, default='Unknown')
+    skill = db.Column(db.String(100), nullable=False, default='None')
+
 
     def __repr__(self):
-        return f'<Task {self.id}>'
+        return f'<Hero {self.id}: {self.name}>'

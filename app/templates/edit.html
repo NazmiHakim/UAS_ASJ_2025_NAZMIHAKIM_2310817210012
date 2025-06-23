@@ -1,0 +1,33 @@
+{% extends 'layout.html' %}
+
+{% block title %}
+Edit Pahlawan - {{ hero.name }}
+{% endblock %}
+
+{% block content %}
+<h1 class="text-white">Edit Profil Pahlawan</h1>
+<p class="text-muted">Perbarui catatan untuk {{ hero.name }}.</p>
+
+<div class="card bg-dark text-white">
+    <div class="card-body">
+        <form action="{{ url_for('edit', id=hero.id) }}" method="post">
+            <div class="mb-3">
+                <label for="hero_name" class="form-label">Nama Pahlawan</label>
+                <input type="text" class="form-control" id="hero_name" name="hero_name" value="{{ hero.name }}" required>
+            </div>
+            <div class="mb-3">
+                <label for="hero_race" class="form-label">Ras</label>
+                <input type="text" class="form-control" id="hero_race" name="hero_race" value="{{ hero.race }}" required>
+            </div>
+            <div class="mb-3">
+                <label for="hero_skill" class="form-label">Keahlian Utama</label>
+                <input type="text" class="form-control" id="hero_skill" name="hero_skill" value="{{ hero.skill }}" required>
+            </div>
+            <button type="submit" class="btn btn-success">
+                <i class="bi bi-save"></i> Simpan Perubahan
+            </button>
+            <a href="{{ url_for('index') }}" class="btn btn-secondary">Batal</a>
+        </form>
+    </div>
+</div>
+{% endblock %}
