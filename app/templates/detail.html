@@ -1,0 +1,26 @@
+{% extends 'layout.html' %}
+
+{% block title %}
+Detail Pahlawan - {{ hero.name }}
+{% endblock %}
+
+{% block content %}
+<div class="card bg-dark text-white">
+    <div class="card-header">
+        <h1 class="card-title">{{ hero.title }} {{ hero.name }}</h1>
+    </div>
+    <div class="card-body">
+        <h5 class="card-subtitle mb-2 text-muted">Ras: {{ hero.race }}</h5>
+        <p class="card-text">
+            <i class="bi bi-star-fill text-warning"></i>
+            <strong>Keahlian Utama:</strong> {{ hero.skill }}
+        </p>
+    </div>
+    <div class="card-footer">
+        <a href="{{ url_for('edit', id=hero.id) }}" class="btn btn-outline-info">
+            <i class="bi bi-pencil-square"></i> Edit
+        </a>
+        <a href="{{ url_for('index') }}" class="btn btn-secondary">Kembali ke Daftar</a>
+    </div>
+</div>
+{% endblock %}

@@ -16,15 +16,19 @@ Perekrutan Pahlawan
     <div class="card-body">
         <h5 class="card-title">Rekrut Pahlawan Baru</h5>
         <form action="{{ url_for('add') }}" method="post" class="row g-3">
-            <div class="col-md-4">
+            <div class="col-md-3">
                 <label for="hero_name" class="form-label">Nama Pahlawan</label>
-                <input type="text" class="form-control" name="hero_name" id="hero_name" placeholder="Contoh: Sir Gideon" required>
+                <input type="text" class="form-control" name="hero_name" id="hero_name" placeholder="Contoh: Gideon" required>
             </div>
             <div class="col-md-3">
+                <label for="hero_title" class="form-label">Gelar Pahlawan</label>
+                <input type="text" class="form-control" name="hero_title" id="hero_title" placeholder="Contoh: Sir" required>
+            </div>
+            <div class="col-md-2">
                 <label for="hero_race" class="form-label">Ras</label>
                 <input type="text" class="form-control" name="hero_race" id="hero_race" placeholder="Contoh: Human" required>
             </div>
-            <div class="col-md-3">
+            <div class="col-md-2">
                 <label for="hero_skill" class="form-label">Keahlian Utama</label>
                 <input type="text" class="form-control" name="hero_skill" id="hero_skill" placeholder="Contoh: Swordsmanship" required>
             </div>
@@ -41,22 +45,24 @@ Perekrutan Pahlawan
 <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
     {% for hero in heroes %}
     <div class="col">
-        <div class="card h-100 text-white bg-dark">
-            <div class="card-body">
-                <h5 class="card-title">{{ hero.name }}</h5>
-                <h6 class="card-subtitle mb-2 text-muted">Ras: {{ hero.race }}</h6>
-                <p class="card-text">
-                    <i class="bi bi-star-fill text-warning"></i> 
-                    <strong>Keahlian:</strong> {{ hero.skill }}
-                </p>
-                <a href="{{ url_for('edit', id=hero.id) }}" class="btn btn-outline-info btn-sm">
-                    <i class="bi bi-pencil-square"></i> Edit
-                </a>
-                <a href="{{ url_for('delete', id=hero.id) }}" class="btn btn-outline-danger btn-sm" onclick="return confirm('Anda yakin ingin menghapus catatan pahlawan ini?')">
-                    <i class="bi bi-trash"></i> Hapus Catatan
-                </a>
+        <a href="{{ url_for('detail', id=hero.id) }}" class="text-decoration-none">
+            <div class="card h-100 text-white bg-dark">
+                <div class="card-body">
+                    <h5 class="card-title">{{ hero.title }} {{ hero.name }}</h5>
+                    <h6 class="card-subtitle mb-2 text-muted">Ras: {{ hero.race }}</h6>
+                    <p class="card-text">
+                        <i class="bi bi-star-fill text-warning"></i>
+                        <strong>Keahlian:</strong> {{ hero.skill }}
+                    </p>
+                    <a href="{{ url_for('edit', id=hero.id) }}" class="btn btn-outline-info btn-sm">
+                        <i class="bi bi-pencil-square"></i> Edit
+                    </a>
+                    <a href="{{ url_for('fall', id=hero.id) }}" class="btn btn-outline-danger btn-sm" onclick="return confirm('Anda yakin ingin memindahkan pahlawan ini ke riwayat gugur?')">
+                        <i class="bi bi-shield-slash"></i> Gugurkan
+                    </a>
+                </div>
             </div>
-        </div>
+        </a>
     </div>
     {% else %}
     <div class="col-12">
@@ -64,4 +70,38 @@ Perekrutan Pahlawan
     </div>
     {% endfor %}
 </div>
+
+<h2 class="text-white border-bottom pb-2 mt-5 mb-3">Riwayat Pahlawan Gugur</h2>
+<form action="{{ url_for('mass_delete') }}" method="post">
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+        {% for hero in fallen_heroes %}
+        <div class="col">
+            <div class="card h-100 text-white bg-dark border-danger">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <h5 class="card-title text-danger">{{ hero.title }} {{ hero.name }}</h5>
+                        <input type="checkbox" name="ids" value="{{ hero.id }}" class="form-check-input">
+                    </div>
+                    <h6 class="card-subtitle mb-2 text-muted">Ras: {{ hero.race }}</h6>
+                    <p class="card-text">
+                        <i class="bi bi-bandaid-fill text-danger"></i>
+                        <strong>Keahlian:</strong> {{ hero.skill }}
+                    </p>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="col-12">
+            <div class="alert alert-secondary">Tidak ada pahlawan dalam riwayat.</div>
+        </div>
+        {% endfor %}
+    </div>
+    {% if fallen_heroes %}
+    <div class="d-flex justify-content-end mt-3">
+        <button type="submit" class="btn btn-danger" onclick="return confirm('Anda yakin ingin menghapus permanen pahlawan yang dipilih?')">
+            <i class="bi bi-trash-fill"></i> Hapus Massal Terpilih
+        </button>
+    </div>
+    {% endif %}
+</form>
 {% endblock %}

@@ -22,17 +22,18 @@ def create_app():
 
     @app.route('/')
     def index():
-        # Mengambil semua data pahlawan
-        heroes = Hero.query.order_by(Hero.id).all()
-        # Mengirim list bernama 'heroes' ke template
-        return render_template('index.html', heroes=heroes)
+        # Mengambil data pahlawan berdasarkan status
+        active_heroes = Hero.query.filter_by(status='active').order_by(Hero.id).all()
+        fallen_heroes = Hero.query.filter_by(status='fallen').order_by(Hero.id).all()
+        return render_template('index.html', heroes=active_heroes, fallen_heroes=fallen_heroes)
 
     @app.route('/add', methods=['POST'])
     def add():
         hero_name = request.form['hero_name']
+        hero_title = request.form['hero_title']
         hero_race = request.form['hero_race']
         hero_skill = request.form['hero_skill']
-        new_hero = Hero(name=hero_name, race=hero_race, skill=hero_skill)
+        new_hero = Hero(name=hero_name, title=hero_title, race=hero_race, skill=hero_skill)
         try:
             db.session.add(new_hero)
             db.session.commit()
@@ -40,21 +41,41 @@ def create_app():
         except Exception as e:
             return f'Terjadi masalah saat merekrut pahlawan baru: {e}'
 
-    @app.route('/delete/<int:id>')
-    def delete(id):
-        hero_to_delete = Hero.query.get_or_404(id)
+    @app.route('/hero/<int:id>')
+    def detail(id):
+        hero = Hero.query.get_or_404(id)
+        return render_template('detail.html', hero=hero)
+
+    @app.route('/fall/<int:id>')
+    def fall(id):
+        hero_to_fall = Hero.query.get_or_404(id)
+        hero_to_fall.status = 'fallen'
         try:
-            db.session.delete(hero_to_delete)
             db.session.commit()
             return redirect(url_for('index'))
         except:
-            return 'Terjadi masalah saat menghapus catatan pahlawan'
+            return 'Terjadi masalah saat memindahkan pahlawan ke riwayat.'
+
+    @app.route('/mass_delete', methods=['POST'])
+    def mass_delete():
+        ids_to_delete = request.form.getlist('ids')
+        if ids_to_delete:
+            try:
+                for hero_id in ids_to_delete:
+                    hero_to_delete = Hero.query.get(hero_id)
+                    if hero_to_delete:
+                        db.session.delete(hero_to_delete)
+                db.session.commit()
+            except Exception as e:
+                return f'Terjadi masalah saat menghapus pahlawan secara massal: {e}'
+        return redirect(url_for('index'))
 
     @app.route('/edit/<int:id>', methods=['GET', 'POST'])
     def edit(id):
         hero_to_edit = Hero.query.get_or_404(id)
         if request.method == 'POST':
             hero_to_edit.name = request.form['hero_name']
+            hero_to_edit.title = request.form['hero_title']
             hero_to_edit.race = request.form['hero_race']
             hero_to_edit.skill = request.form['hero_skill']
             try:
