@@ -1,6 +1,6 @@
 import os
 from flask import Flask, render_template, request, redirect, url_for
-from .models import db, Hero
+from models import db, Hero
 
 
 def create_app():

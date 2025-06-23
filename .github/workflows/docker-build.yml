@@ -7,7 +7,6 @@ on:
 
 jobs:
   build-and-push:
-    runs-on: ubuntu-latest # Menjalankan job di mesin virtual Ubuntu
 
     steps:
       # Langkah 1: Checkout kode dari repositori
