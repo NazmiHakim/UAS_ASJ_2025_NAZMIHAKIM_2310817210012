@@ -1,5 +1,3 @@
-# nazmihakim/uas_asj_2025_nazmihakim_2310817210012/UAS_ASJ_2025_NAZMIHAKIM_2310817210012-c4d16fcf73093ff99848b6e9597b3c78648a8265/app/models.py
-
 from flask_sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy()
