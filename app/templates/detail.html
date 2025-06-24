@@ -6,21 +6,29 @@ Detail Pahlawan - {{ hero.name }}
 
 {% block content %}
 <div class="card bg-dark text-white">
-    <div class="card-header">
-        <h1 class="card-title">{% if hero.title %}{{ hero.title }} {% endif %}{{ hero.name }}</h1>
-    </div>
-    <div class="card-body">
-        <h5 class="card-subtitle mb-2 text-muted">Ras: {{ hero.race }}</h5>
-        <p class="card-text">
-            <i class="bi bi-star-fill text-warning"></i>
-            <strong>Keahlian Utama:</strong> {{ hero.skill }}
-        </p>
-    </div>
-    <div class="card-footer">
-        <a href="{{ url_for('edit', id=hero.id) }}" class="btn btn-outline-info">
-            <i class="bi bi-pencil-square"></i> Edit
-        </a>
-        <a href="{{ url_for('index') }}" class="btn btn-secondary">Kembali ke Daftar</a>
+    <div class="row g-0">
+        <div class="col-md-4">
+            <img src="{{ url_for('static', filename='uploads/' + hero.photo) }}" class="img-fluid rounded-start" alt="Foto {{ hero.name }}" style="object-fit: cover; height: 100%;">
+        </div>
+        <div class="col-md-8">
+            <div class="card-header">
+                <h1 class="card-title">{% if hero.title %}{{ hero.title }} {% endif %}{{ hero.name }}</h1>
+            </div>
+            <div class="card-body">
+                <h5 class="card-subtitle mb-2 text-muted">Ras: {{ hero.race }}</h5>
+                <h5 class="card-subtitle mb-3 text-muted">Gender: {{ hero.gender }}</h5>
+                <p class="card-text">
+                    <i class="bi bi-star-fill text-warning"></i>
+                    <strong>Keahlian Utama:</strong> {{ hero.skill }}
+                </p>
+            </div>
+            <div class="card-footer bg-transparent">
+                <a href="{{ url_for('edit', id=hero.id) }}" class="btn btn-outline-info">
+                    <i class="bi bi-pencil-square"></i> Edit
+                </a>
+                <a href="{{ url_for('index') }}" class="btn btn-secondary">Kembali ke Daftar</a>
+            </div>
+        </div>
     </div>
 </div>
 {% endblock %}

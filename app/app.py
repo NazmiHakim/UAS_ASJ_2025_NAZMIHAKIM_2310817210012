@@ -1,7 +1,12 @@
+# nazmihakim/uas_asj_2025_nazmihakim_2310817210012/UAS_ASJ_2025_NAZMIHAKIM_2310817210012-c4d16fcf73093ff99848b6e9597b3c78648a8265/app/app.py
+
 import os
 from flask import Flask, render_template, request, redirect, url_for
+from werkzeug.utils import secure_filename
 from models import db, Hero
 
+# Mendapatkan path absolut dari direktori tempat file app.py berada
+basedir = os.path.abspath(os.path.dirname(__file__))
 
 def create_app():
     app = Flask(__name__)
@@ -13,6 +18,10 @@ def create_app():
 
     app.config['SQLALCHEMY_DATABASE_URI'] = f'postgresql://{db_user}:{db_password}@{db_host}:5432/{db_name}'
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+    
+    # --- PERUBAHAN DI SINI ---
+    # Konfigurasi folder unggahan menggunakan path absolut yang benar di dalam kontainer
+    app.config['UPLOAD_FOLDER'] = os.path.join(basedir, 'static/uploads')
 
 
     db.init_app(app)
@@ -33,7 +42,19 @@ def create_app():
         hero_title = request.form.get('hero_title')
         hero_race = request.form['hero_race']
         hero_skill = request.form['hero_skill']
-        new_hero = Hero(name=hero_name, title=hero_title, race=hero_race, skill=hero_skill)
+        hero_gender = request.form['hero_gender']
+        
+        new_hero = Hero(name=hero_name, title=hero_title, race=hero_race, skill=hero_skill, gender=hero_gender)
+
+        # Proses unggah foto
+        photo = request.files.get('hero_photo')
+        if photo and photo.filename != '':
+            filename = secure_filename(photo.filename)
+            # Pastikan direktori ada
+            os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+            photo.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            new_hero.photo = filename
+
         try:
             db.session.add(new_hero)
             db.session.commit()
@@ -78,6 +99,16 @@ def create_app():
             hero_to_edit.title = request.form.get('hero_title')
             hero_to_edit.race = request.form['hero_race']
             hero_to_edit.skill = request.form['hero_skill']
+            hero_to_edit.gender = request.form['hero_gender']
+
+            # Proses pembaruan foto
+            photo = request.files.get('hero_photo')
+            if photo and photo.filename != '':
+                filename = secure_filename(photo.filename)
+                os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+                photo.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                hero_to_edit.photo = filename
+
             try:
                 db.session.commit()
                 return redirect(url_for('index'))

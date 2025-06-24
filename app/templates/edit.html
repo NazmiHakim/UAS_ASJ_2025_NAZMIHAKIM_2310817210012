@@ -10,7 +10,10 @@ Edit Pahlawan - {{ hero.name }}
 
 <div class="card bg-dark text-white">
     <div class="card-body">
-        <form action="{{ url_for('edit', id=hero.id) }}" method="post">
+        <div class="text-center mb-4">
+            <img src="{{ url_for('static', filename='uploads/' + hero.photo) }}" class="img-thumbnail" alt="Foto {{ hero.name }}" style="width: 150px; height: 150px; object-fit: cover;">
+        </div>
+        <form action="{{ url_for('edit', id=hero.id) }}" method="post" enctype="multipart/form-data">
             <div class="mb-3">
                 <label for="hero_name" class="form-label">Nama Pahlawan</label>
                 <input type="text" class="form-control" id="hero_name" name="hero_name" value="{{ hero.name }}" required>
@@ -26,6 +29,17 @@ Edit Pahlawan - {{ hero.name }}
             <div class="mb-3">
                 <label for="hero_skill" class="form-label">Keahlian Utama</label>
                 <input type="text" class="form-control" id="hero_skill" name="hero_skill" value="{{ hero.skill }}" required>
+            </div>
+            <div class="mb-3">
+                <label for="hero_gender" class="form-label">Gender</label>
+                <select name="hero_gender" id="hero_gender" class="form-select">
+                    <option value="Laki-laki" {% if hero.gender == 'Laki-laki' %}selected{% endif %}>Laki-laki</option>
+                    <option value="Perempuan" {% if hero.gender == 'Perempuan' %}selected{% endif %}>Perempuan</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="hero_photo" class="form-label">Ganti Foto (Opsional)</label>
+                <input type="file" class="form-control" name="hero_photo" id="hero_photo">
             </div>
             <button type="submit" class="btn btn-success">
                 <i class="bi bi-save"></i> Simpan Perubahan
