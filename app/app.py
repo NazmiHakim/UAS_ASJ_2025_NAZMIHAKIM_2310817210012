@@ -1,5 +1,3 @@
-# nazmihakim/uas_asj_2025_nazmihakim_2310817210012/UAS_ASJ_2025_NAZMIHAKIM_2310817210012-c4d16fcf73093ff99848b6e9597b3c78648a8265/app/app.py
-
 import os
 from flask import Flask, render_template, request, redirect, url_for, Response
 from models import db, Hero
@@ -14,10 +12,6 @@ def create_app():
 
     app.config['SQLALCHEMY_DATABASE_URI'] = f'postgresql://{db_user}:{db_password}@{db_host}:5432/{db_name}'
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-    
-    # --- PERUBAHAN DI SINI ---
-    # Konfigurasi UPLOAD_FOLDER tidak lagi diperlukan untuk menyimpan file.
-    # Namun, kita tetap membiarkannya jika ada keperluan lain di masa depan, tapi logika penyimpanan file akan dihapus.
 
     db.init_app(app)
 
@@ -40,8 +34,6 @@ def create_app():
         
         new_hero = Hero(name=hero_name, title=hero_title, race=hero_race, skill=hero_skill, gender=hero_gender)
 
-        # --- PERUBAHAN DI SINI ---
-        # Proses unggah foto ke database
         photo = request.files.get('hero_photo')
         if photo and photo.filename != '':
             new_hero.photo = photo.read() # Membaca data biner dari file
@@ -55,13 +47,11 @@ def create_app():
             db.session.rollback()
             return f'Terjadi masalah saat merekrut pahlawan baru: {e}'
 
-    # --- ROUTE BARU DI SINI ---
     @app.route('/hero/photo/<int:id>')
     def hero_photo(id):
         hero = Hero.query.get_or_404(id)
         if not hero.photo:
-            # Jika tidak ada foto, bisa kembalikan gambar default atau 404
-            return app.send_static_file('resources/default.png') # Asumsi ada default.png di static/resources
+            return app.send_static_file('resources/default.png')
         
         return Response(hero.photo, mimetype=hero.photo_mimetype)
 
