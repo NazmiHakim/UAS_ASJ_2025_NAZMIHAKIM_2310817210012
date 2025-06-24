@@ -30,7 +30,7 @@ def create_app():
     @app.route('/add', methods=['POST'])
     def add():
         hero_name = request.form['hero_name']
-        hero_title = request.form['hero_title']
+        hero_title = request.form.get('hero_title')
         hero_race = request.form['hero_race']
         hero_skill = request.form['hero_skill']
         new_hero = Hero(name=hero_name, title=hero_title, race=hero_race, skill=hero_skill)
@@ -75,7 +75,7 @@ def create_app():
         hero_to_edit = Hero.query.get_or_404(id)
         if request.method == 'POST':
             hero_to_edit.name = request.form['hero_name']
-            hero_to_edit.title = request.form['hero_title']
+            hero_to_edit.title = request.form.get('hero_title')
             hero_to_edit.race = request.form['hero_race']
             hero_to_edit.skill = request.form['hero_skill']
             try:

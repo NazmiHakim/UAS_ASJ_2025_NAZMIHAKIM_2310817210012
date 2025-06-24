@@ -5,7 +5,7 @@ Perekrutan Pahlawan
 {% endblock %}
 
 {% block content %}
-<div class="p-5 mb-4 bg-dark rounded-3 text-white">
+<div class="p-5 mb-4 rounded-3 text-white">
     <div class="container-fluid py-5">
       <h1 class="display-5 fw-bold">Pasukan Pahlawan Kuat</h1>
       <p class="col-md-8 fs-4">Kelola daftar para petualang pemberani di kerajaan ini. Rekrut nama baru, perbarui keahlian, atau arsipkan mereka yang telah pensiun.</p>
@@ -21,8 +21,8 @@ Perekrutan Pahlawan
                 <input type="text" class="form-control" name="hero_name" id="hero_name" placeholder="Contoh: Gideon" required>
             </div>
             <div class="col-md-3">
-                <label for="hero_title" class="form-label">Gelar Pahlawan</label>
-                <input type="text" class="form-control" name="hero_title" id="hero_title" placeholder="Contoh: Sir" required>
+                <label for="hero_title" class="form-label">Gelar Pahlawan (Opsional)</label>
+                <input type="text" class="form-control" name="hero_title" id="hero_title" placeholder="Contoh: Sir">
             </div>
             <div class="col-md-2">
                 <label for="hero_race" class="form-label">Ras</label>
@@ -48,7 +48,7 @@ Perekrutan Pahlawan
         <a href="{{ url_for('detail', id=hero.id) }}" class="text-decoration-none">
             <div class="card h-100 text-white bg-dark">
                 <div class="card-body">
-                    <h5 class="card-title">{{ hero.title }} {{ hero.name }}</h5>
+                    <h5 class="card-title">{% if hero.title %}{{ hero.title }} {% endif %}{{ hero.name }}</h5>
                     <h6 class="card-subtitle mb-2 text-muted">Ras: {{ hero.race }}</h6>
                     <p class="card-text">
                         <i class="bi bi-star-fill text-warning"></i>
@@ -79,7 +79,7 @@ Perekrutan Pahlawan
             <div class="card h-100 text-white bg-dark border-danger">
                 <div class="card-body">
                     <div class="d-flex justify-content-between">
-                        <h5 class="card-title text-danger">{{ hero.title }} {{ hero.name }}</h5>
+                        <h5 class="card-title text-danger">{% if hero.title %}{{ hero.title }} {% endif %}{{ hero.name }}</h5>
                         <input type="checkbox" name="ids" value="{{ hero.id }}" class="form-check-input">
                     </div>
                     <h6 class="card-subtitle mb-2 text-muted">Ras: {{ hero.race }}</h6>

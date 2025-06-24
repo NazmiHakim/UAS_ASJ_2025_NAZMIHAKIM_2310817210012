@@ -16,8 +16,8 @@ Edit Pahlawan - {{ hero.name }}
                 <input type="text" class="form-control" id="hero_name" name="hero_name" value="{{ hero.name }}" required>
             </div>
             <div class="mb-3">
-                <label for="hero_title" class="form-label">Gelar Pahlawan</label>
-                <input type="text" class="form-control" id="hero_title" name="hero_title" value="{{ hero.title }}" required>
+                <label for="hero_title" class="form-label">Gelar Pahlawan (Opsional)</label>
+                <input type="text" class="form-control" id="hero_title" name="hero_title" value="{{ hero.title or '' }}">
             </div>
             <div class="mb-3">
                 <label for="hero_race" class="form-label">Ras</label>

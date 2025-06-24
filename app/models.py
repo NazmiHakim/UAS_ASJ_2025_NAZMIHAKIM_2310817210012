@@ -8,7 +8,7 @@ class Hero(db.Model):
     title = db.Column(db.String(200), nullable=True)
     race = db.Column(db.String(50), nullable=False, default='Unknown')
     skill = db.Column(db.String(100), nullable=False, default='None')
-    status = db.Column(db.String(20), nullable=False, default='active') # 'active' or 'fallen'
+    status = db.Column(db.String(20), nullable=False, default='active')
 
 
     def __repr__(self):
