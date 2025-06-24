@@ -52,13 +52,14 @@ Perekrutan Pahlawan
     </div>
 </div>
 
+
 <h2 class="text-white border-bottom pb-2 mb-3">Pahlawan Terkini</h2>
 <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
     {% for hero in heroes %}
     <div class="col">
         <div class="card h-100 text-white bg-dark">
             <a href="{{ url_for('detail', id=hero.id) }}" class="text-decoration-none text-white">
-                <img src="{{ url_for('static', filename='uploads/' + hero.photo) }}" class="card-img-top" alt="Foto {{ hero.name }}" style="height: 200px; object-fit: cover;">
+                <img src="{{ url_for('hero_photo', id=hero.id) }}" class="card-img-top" alt="Foto {{ hero.name }}" style="height: 200px; object-fit: cover;">
                 <div class="card-body">
                     <h5 class="card-title">{% if hero.title %}{{ hero.title }} {% endif %}{{ hero.name }}</h5>
                     <h6 class="card-subtitle mb-2 text-muted">Ras: {{ hero.race }} | Gender: {{ hero.gender }}</h6>
@@ -91,7 +92,7 @@ Perekrutan Pahlawan
         {% for hero in fallen_heroes %}
         <div class="col">
             <div class="card h-100 text-white bg-dark border-danger">
-                <img src="{{ url_for('static', filename='uploads/' + hero.photo) }}" class="card-img-top" alt="Foto {{ hero.name }}" style="height: 150px; object-fit: cover; filter: grayscale(100%);">
+                <img src="{{ url_for('hero_photo', id=hero.id) }}" class="card-img-top" alt="Foto {{ hero.name }}" style="height: 150px; object-fit: cover; filter: grayscale(100%);">
                 <div class="card-body">
                     <div class="d-flex justify-content-between">
                         <h5 class="card-title text-danger">{% if hero.title %}{{ hero.title }} {% endif %}{{ hero.name }}</h5>

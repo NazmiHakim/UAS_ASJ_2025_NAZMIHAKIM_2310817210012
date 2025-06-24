@@ -7,6 +7,3 @@ __pycache__/
 
 # Docker
 docker-compose.override.yml
-
-# Uploads
-app/static/uploads/

@@ -10,7 +10,9 @@ class Hero(db.Model):
     skill = db.Column(db.String(100), nullable=False, default='None')
     status = db.Column(db.String(20), nullable=False, default='active')
     gender = db.Column(db.String(10), nullable=False, default='Laki-laki')
-    photo = db.Column(db.String(255), nullable=False, default='default.png')
+    
+    photo = db.Column(db.LargeBinary, nullable=True) 
+    photo_mimetype = db.Column(db.String(50), nullable=True)
 
     def __repr__(self):
         return f'<Hero {self.id}: {self.name}>'

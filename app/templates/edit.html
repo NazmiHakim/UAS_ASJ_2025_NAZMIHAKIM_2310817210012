@@ -11,7 +11,7 @@ Edit Pahlawan - {{ hero.name }}
 <div class="card bg-dark text-white">
     <div class="card-body">
         <div class="text-center mb-4">
-            <img src="{{ url_for('static', filename='uploads/' + hero.photo) }}" class="img-thumbnail" alt="Foto {{ hero.name }}" style="width: 150px; height: 150px; object-fit: cover;">
+            <img src="{{ url_for('hero_photo', id=hero.id) }}" class="img-thumbnail" alt="Foto {{ hero.name }}" style="width: 150px; height: 150px; object-fit: cover;">
         </div>
         <form action="{{ url_for('edit', id=hero.id) }}" method="post" enctype="multipart/form-data">
             <div class="mb-3">

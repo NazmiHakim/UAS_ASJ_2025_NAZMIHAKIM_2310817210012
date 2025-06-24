@@ -1,12 +1,8 @@
 # nazmihakim/uas_asj_2025_nazmihakim_2310817210012/UAS_ASJ_2025_NAZMIHAKIM_2310817210012-c4d16fcf73093ff99848b6e9597b3c78648a8265/app/app.py
 
 import os
-from flask import Flask, render_template, request, redirect, url_for
-from werkzeug.utils import secure_filename
+from flask import Flask, render_template, request, redirect, url_for, Response
 from models import db, Hero
-
-# Mendapatkan path absolut dari direktori tempat file app.py berada
-basedir = os.path.abspath(os.path.dirname(__file__))
 
 def create_app():
     app = Flask(__name__)
@@ -20,9 +16,8 @@ def create_app():
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     
     # --- PERUBAHAN DI SINI ---
-    # Konfigurasi folder unggahan menggunakan path absolut yang benar di dalam kontainer
-    app.config['UPLOAD_FOLDER'] = os.path.join(basedir, 'static/uploads')
-
+    # Konfigurasi UPLOAD_FOLDER tidak lagi diperlukan untuk menyimpan file.
+    # Namun, kita tetap membiarkannya jika ada keperluan lain di masa depan, tapi logika penyimpanan file akan dihapus.
 
     db.init_app(app)
 
@@ -31,7 +26,6 @@ def create_app():
 
     @app.route('/')
     def index():
-        # Mengambil data pahlawan berdasarkan status
         active_heroes = Hero.query.filter_by(status='active').order_by(Hero.id).all()
         fallen_heroes = Hero.query.filter_by(status='fallen').order_by(Hero.id).all()
         return render_template('index.html', heroes=active_heroes, fallen_heroes=fallen_heroes)
@@ -46,21 +40,30 @@ def create_app():
         
         new_hero = Hero(name=hero_name, title=hero_title, race=hero_race, skill=hero_skill, gender=hero_gender)
 
-        # Proses unggah foto
+        # --- PERUBAHAN DI SINI ---
+        # Proses unggah foto ke database
         photo = request.files.get('hero_photo')
         if photo and photo.filename != '':
-            filename = secure_filename(photo.filename)
-            # Pastikan direktori ada
-            os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
-            photo.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            new_hero.photo = filename
+            new_hero.photo = photo.read() # Membaca data biner dari file
+            new_hero.photo_mimetype = photo.mimetype # Menyimpan tipe MIME
 
         try:
             db.session.add(new_hero)
             db.session.commit()
             return redirect(url_for('index'))
         except Exception as e:
+            db.session.rollback()
             return f'Terjadi masalah saat merekrut pahlawan baru: {e}'
+
+    # --- ROUTE BARU DI SINI ---
+    @app.route('/hero/photo/<int:id>')
+    def hero_photo(id):
+        hero = Hero.query.get_or_404(id)
+        if not hero.photo:
+            # Jika tidak ada foto, bisa kembalikan gambar default atau 404
+            return app.send_static_file('resources/default.png') # Asumsi ada default.png di static/resources
+        
+        return Response(hero.photo, mimetype=hero.photo_mimetype)
 
     @app.route('/hero/<int:id>')
     def detail(id):
@@ -82,14 +85,13 @@ def create_app():
         ids_to_delete = request.form.getlist('ids')
         if ids_to_delete:
             try:
-                for hero_id in ids_to_delete:
-                    hero_to_delete = Hero.query.get(hero_id)
-                    if hero_to_delete:
-                        db.session.delete(hero_to_delete)
+                Hero.query.filter(Hero.id.in_(ids_to_delete)).delete(synchronize_session=False)
                 db.session.commit()
             except Exception as e:
+                db.session.rollback()
                 return f'Terjadi masalah saat menghapus pahlawan secara massal: {e}'
         return redirect(url_for('index'))
+
 
     @app.route('/edit/<int:id>', methods=['GET', 'POST'])
     def edit(id):
@@ -101,19 +103,17 @@ def create_app():
             hero_to_edit.skill = request.form['hero_skill']
             hero_to_edit.gender = request.form['hero_gender']
 
-            # Proses pembaruan foto
             photo = request.files.get('hero_photo')
             if photo and photo.filename != '':
-                filename = secure_filename(photo.filename)
-                os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
-                photo.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-                hero_to_edit.photo = filename
+                hero_to_edit.photo = photo.read()
+                hero_to_edit.photo_mimetype = photo.mimetype
 
             try:
                 db.session.commit()
                 return redirect(url_for('index'))
-            except:
-                return 'Terjadi masalah saat memperbarui data pahlawan'
+            except Exception as e:
+                db.session.rollback()
+                return f'Terjadi masalah saat memperbarui data pahlawan: {e}'
         else:
             return render_template('edit.html', hero=hero_to_edit)
 
