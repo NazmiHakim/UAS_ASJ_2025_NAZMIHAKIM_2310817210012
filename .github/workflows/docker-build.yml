@@ -1,12 +1,12 @@
 name: CI-Build and Push Docker Image
 
-# Pemicu workflow: dijalankan setiap kali ada push ke branch 'main'
 on:
   push:
     branches: [ "main" ]
 
 jobs:
   build-and-push:
+    runs-on: ubuntu-latest
 
     steps:
       # Langkah 1: Checkout kode dari repositori
@@ -24,6 +24,6 @@ jobs:
       - name: Build and push Docker image
         uses: docker/build-push-action@v4
         with:
-          context: . # Konteks build adalah direktori root
-          push: true # Push image setelah build berhasil
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/proyek-crud-docker:latest # Tag image
+          context: .
+          push: true
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/proyek-crud-docker:latest
