@@ -38,6 +38,18 @@ Edit Pahlawan - {{ hero.name }}
                 </select>
             </div>
             <div class="mb-3">
+                <label for="hero_rank" class="form-label">Rank</label>
+                <select name="hero_rank" id="hero_rank" class="form-select">
+                    <option value="S" {% if hero.rank == 'S' %}selected{% endif %}>S</option>
+                    <option value="A" {% if hero.rank == 'A' %}selected{% endif %}>A</option>
+                    <option value="B" {% if hero.rank == 'B' %}selected{% endif %}>B</option>
+                    <option value="C" {% if hero.rank == 'C' %}selected{% endif %}>C</option>
+                    <option value="D" {% if hero.rank == 'D' %}selected{% endif %}>D</option>
+                    <option value="E" {% if hero.rank == 'E' %}selected{% endif %}>E</option>
+                    <option value="F" {% if hero.rank == 'F' %}selected{% endif %}>F</option>
+                </select>
+            </div>
+            <div class="mb-3">
                 <label for="hero_photo" class="form-label">Ganti Foto (Opsional)</label>
                 <input type="file" class="form-control" name="hero_photo" id="hero_photo">
             </div>

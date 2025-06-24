@@ -20,9 +20,25 @@ def create_app():
 
     @app.route('/')
     def index():
-        active_heroes = Hero.query.filter_by(status='active').order_by(Hero.id).all()
+        # Ambil parameter filter dari query string
+        rank_filter = request.args.get('rank', '')
+        gender_filter = request.args.get('gender', '')
+
+        # Query dasar untuk pahlawan aktif
+        query = Hero.query.filter_by(status='active')
+
+        # Terapkan filter jika ada
+        if rank_filter:
+            query = query.filter_by(rank=rank_filter)
+        if gender_filter:
+            query = query.filter_by(gender=gender_filter)
+        
+        active_heroes = query.order_by(Hero.id).all()
         fallen_heroes = Hero.query.filter_by(status='fallen').order_by(Hero.id).all()
-        return render_template('index.html', heroes=active_heroes, fallen_heroes=fallen_heroes)
+        
+        # Kirim nilai filter ke template
+        return render_template('index.html', heroes=active_heroes, fallen_heroes=fallen_heroes, rank_filter=rank_filter, gender_filter=gender_filter)
+
 
     @app.route('/add', methods=['POST'])
     def add():
@@ -31,13 +47,15 @@ def create_app():
         hero_race = request.form['hero_race']
         hero_skill = request.form['hero_skill']
         hero_gender = request.form['hero_gender']
+        # Ambil rank dari form
+        hero_rank = request.form['hero_rank']
         
-        new_hero = Hero(name=hero_name, title=hero_title, race=hero_race, skill=hero_skill, gender=hero_gender)
+        new_hero = Hero(name=hero_name, title=hero_title, race=hero_race, skill=hero_skill, gender=hero_gender, rank=hero_rank)
 
         photo = request.files.get('hero_photo')
         if photo and photo.filename != '':
-            new_hero.photo = photo.read() # Membaca data biner dari file
-            new_hero.photo_mimetype = photo.mimetype # Menyimpan tipe MIME
+            new_hero.photo = photo.read()
+            new_hero.photo_mimetype = photo.mimetype
 
         try:
             db.session.add(new_hero)
@@ -51,6 +69,7 @@ def create_app():
     def hero_photo(id):
         hero = Hero.query.get_or_404(id)
         if not hero.photo:
+            # Jika tidak ada foto, tampilkan default
             return app.send_static_file('resources/default.png')
         
         return Response(hero.photo, mimetype=hero.photo_mimetype)
@@ -92,6 +111,8 @@ def create_app():
             hero_to_edit.race = request.form['hero_race']
             hero_to_edit.skill = request.form['hero_skill']
             hero_to_edit.gender = request.form['hero_gender']
+            # Perbarui rank dari form
+            hero_to_edit.rank = request.form['hero_rank']
 
             photo = request.files.get('hero_photo')
             if photo and photo.filename != '':

@@ -39,6 +39,18 @@ Perekrutan Pahlawan
                     <option value="Perempuan">Perempuan</option>
                 </select>
             </div>
+            <div class="col-md-2">
+                <label for="hero_rank" class="form-label">Rank</label>
+                <select name="hero_rank" id="hero_rank" class="form-select">
+                    <option value="S">S</option>
+                    <option value="A">A</option>
+                    <option value="B">B</option>
+                    <option value="C">C</option>
+                    <option value="D">D</option>
+                    <option value="E">E</option>
+                    <option value="F" selected>F</option>
+                </select>
+            </div>
             <div class="col-md-4">
                 <label for="hero_photo" class="form-label">Foto Pahlawan (Opsional)</label>
                 <input type="file" class="form-control" name="hero_photo" id="hero_photo">
@@ -47,6 +59,43 @@ Perekrutan Pahlawan
                 <button class="btn btn-warning w-100" type="submit">
                     <i class="bi bi-person-plus-fill"></i> Rekrut
                 </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="card bg-dark text-white mb-4">
+    <div class="card-body">
+        <h5 class="card-title">Filter Pahlawan</h5>
+        <form action="{{ url_for('index') }}" method="get" class="row g-3">
+            <div class="col-md-4">
+                <label for="rank" class="form-label">Filter Berdasarkan Rank</label>
+                <select name="rank" id="rank" class="form-select">
+                    <option value="">Semua Rank</option>
+                    <option value="S" {% if rank_filter == 'S' %}selected{% endif %}>S</option>
+                    <option value="A" {% if rank_filter == 'A' %}selected{% endif %}>A</option>
+                    <option value="B" {% if rank_filter == 'B' %}selected{% endif %}>B</option>
+                    <option value="C" {% if rank_filter == 'C' %}selected{% endif %}>C</option>
+                    <option value="D" {% if rank_filter == 'D' %}selected{% endif %}>D</option>
+                    <option value="E" {% if rank_filter == 'E' %}selected{% endif %}>E</option>
+                    <option value="F" {% if rank_filter == 'F' %}selected{% endif %}>F</option>
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label for="gender" class="form-label">Filter Berdasarkan Gender</label>
+                <select name="gender" id="gender" class="form-select">
+                    <option value="">Semua Gender</option>
+                    <option value="Laki-laki" {% if gender_filter == 'Laki-laki' %}selected{% endif %}>Laki-laki</option>
+                    <option value="Perempuan" {% if gender_filter == 'Perempuan' %}selected{% endif %}>Perempuan</option>
+                </select>
+            </div>
+            <div class="col-md-4 d-flex align-items-end">
+                <button type="submit" class="btn btn-primary me-2">
+                    <i class="bi bi-funnel-fill"></i> Terapkan Filter
+                </button>
+                <a href="{{ url_for('index') }}" class="btn btn-secondary">
+                    <i class="bi bi-x-lg"></i> Reset
+                </a>
             </div>
         </form>
     </div>
@@ -61,7 +110,7 @@ Perekrutan Pahlawan
             <a href="{{ url_for('detail', id=hero.id) }}" class="text-decoration-none text-white">
                 <img src="{{ url_for('hero_photo', id=hero.id) }}" class="card-img-top" alt="Foto {{ hero.name }}" style="height: 200px; object-fit: cover;">
                 <div class="card-body">
-                    <h5 class="card-title">{% if hero.title %}{{ hero.title }} {% endif %}{{ hero.name }}</h5>
+                    <h5 class="card-title">{% if hero.title %}{{ hero.title }} {% endif %}{{ hero.name }} <span class="badge bg-warning text-dark">Rank {{ hero.rank }}</span></h5>
                     <h6 class="card-subtitle mb-2 text-muted">Ras: {{ hero.race }} | Gender: {{ hero.gender }}</h6>
                     <p class="card-text">
                         <i class="bi bi-star-fill text-warning"></i>
@@ -81,7 +130,13 @@ Perekrutan Pahlawan
     </div>
     {% else %}
     <div class="col-12">
-        <div class="alert alert-secondary">Belum ada pahlawan yang direkrut.</div>
+        <div class="alert alert-secondary">
+            {% if rank_filter or gender_filter %}
+                Tidak ada pahlawan yang cocok dengan kriteria filter Anda.
+            {% else %}
+                Belum ada pahlawan yang direkrut.
+            {% endif %}
+        </div>
     </div>
     {% endfor %}
 </div>
@@ -95,7 +150,7 @@ Perekrutan Pahlawan
                 <img src="{{ url_for('hero_photo', id=hero.id) }}" class="card-img-top" alt="Foto {{ hero.name }}" style="height: 150px; object-fit: cover; filter: grayscale(100%);">
                 <div class="card-body">
                     <div class="d-flex justify-content-between">
-                        <h5 class="card-title text-danger">{% if hero.title %}{{ hero.title }} {% endif %}{{ hero.name }}</h5>
+                        <h5 class="card-title text-danger">{% if hero.title %}{{ hero.title }} {% endif %}{{ hero.name }} <span class="badge bg-secondary">Rank {{ hero.rank }}</span></h5>
                         <input type="checkbox" name="ids" value="{{ hero.id }}" class="form-check-input">
                     </div>
                     <h6 class="card-subtitle mb-2 text-muted">Ras: {{ hero.race }} | Gender: {{ hero.gender }}</h6>
