@@ -127,5 +127,33 @@ def create_app():
                 return f'Terjadi masalah saat memperbarui data pahlawan: {e}'
         else:
             return render_template('edit.html', hero=hero_to_edit)
+    
+    @app.route('/promote/<int:id>')
+    def promote(id):
+        hero = Hero.query.get_or_404(id)
+        ranks = ['F', 'E', 'D', 'C', 'B', 'A', 'S']
+        try:
+            current_rank_index = ranks.index(hero.rank)
+            if current_rank_index < len(ranks) - 1:
+                hero.rank = ranks[current_rank_index + 1]
+                db.session.commit()
+        except (ValueError, IndexError):
+            # Handle jika rank saat ini tidak ada di list atau sudah paling tinggi
+            pass
+        return redirect(url_for('index'))
 
+    @app.route('/demote/<int:id>')
+    def demote(id):
+        hero = Hero.query.get_or_404(id)
+        ranks = ['F', 'E', 'D', 'C', 'B', 'A', 'S']
+        try:
+            current_rank_index = ranks.index(hero.rank)
+            if current_rank_index > 0:
+                hero.rank = ranks[current_rank_index - 1]
+                db.session.commit()
+        except (ValueError, IndexError):
+            # Handle jika rank saat ini tidak ada di list atau sudah paling rendah
+            pass
+        return redirect(url_for('index'))
+        
     return app
